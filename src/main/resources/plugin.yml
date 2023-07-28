@@ -1,0 +1,11 @@
+name: testplugin
+description:
+version: 1.0
+main: pl.piotrkociakx.template.Main
+api-version: '1.13'
+load: STARTUP
+authors: [piotrkociakx]
+website: https:///www.piotrkociakx.pl
+loadbefore: PlaceholderAPI
+softdepend: PlaceholderAPI
+depend: PlaceholderAPI
