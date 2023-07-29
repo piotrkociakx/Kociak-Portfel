@@ -6,17 +6,21 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import pl.piotrkociakx.template.helpers.*;
+import pl.piotrkociakx.template.helpers.ChatHelper;
+import pl.piotrkociakx.template.conifg.YamlDataManager;
 
-public class TestCommand implements CommandExecutor {
+public class PortfelCommand implements CommandExecutor {
 
     private final JavaPlugin plugin;
     private final FileConfiguration config;
+    private final YamlDataManager dataManager;
 
-    public TestCommand(JavaPlugin plugin, FileConfiguration config) {
+
+    public PortfelCommand(JavaPlugin plugin, FileConfiguration config, YamlDataManager dataManager) {
         this.plugin = plugin;
         this.config = config;
-        plugin.getCommand("testkomenda").setExecutor(this);
+        this.dataManager = dataManager;
+        plugin.getCommand("portfel").setExecutor(this);
     }
 
     @Override
@@ -28,13 +32,13 @@ public class TestCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if(!player.hasPermission("testpermisja")) {
-            player.sendMessage(ChatHelper.colored("&cNie posiadasz wymaganych permisji!"));
-            return false;
-        }
 
         // Kod
-        player.sendMessage(ChatHelper.colored("&aWszystko sie zgadza!"));
+        int balance = dataManager.getPlayerBalance(player.getName());
+        String message = config.getString("messages.balance", "Masz teraz {balance} pieniędzy");
+        String messageWithBalance = message.replace("{balance}", String.valueOf(balance));
+        player.sendMessage(ChatHelper.colored(messageWithBalance));
+
 
         return true;
     }

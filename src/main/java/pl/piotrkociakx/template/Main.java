@@ -7,20 +7,26 @@ import pl.piotrkociakx.template.commands.*;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 
-
 public final class Main extends JavaPlugin {
+
+    private YamlDataManager dataManager;
     private ConfigManager configManager;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-
         configManager = new ConfigManager(this);
-        registerFeature("funkcja1.enabled", "funkcja1", new TestListener(configManager));
-        registerCommand("komenda1.enabled", "komenda1",new TestCommand(this, getConfig()));
+
+        dataManager = new YamlDataManager();
+        dataManager.setupDataFile(getDataFolder());
+
+        getServer().getPluginManager().registerEvents(new AddPlayerData(this), this);
+
+        registerCommand("commands.enabled.adminportfel", "adminportfel", new AdminPortfelCommand(this, getConfig()));
+        registerCommand("commands.enabled.itemshop", "itemshop", new ItemShopCommand(this, getConfig(), dataManager));
+        registerCommand("commands.enabled.portfel", "portfel", new PortfelCommand(this, getConfig(), dataManager));
+        new Placeholders(dataManager).register();
     }
-
-
 
 
 
@@ -34,6 +40,7 @@ public final class Main extends JavaPlugin {
             return;
         }
     }
+
     private void registerCommand(String configPath, String commandName, CommandExecutor executor) {
         if (getConfig().getBoolean(configPath)) {
             getLogger().info("[+] Pomyslnie wczytano komende: " + commandName);
